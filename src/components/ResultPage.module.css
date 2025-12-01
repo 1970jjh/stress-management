@@ -1,0 +1,462 @@
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem 2rem;
+  animation: slideUp 0.6s ease-out;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Tab Navigation */
+.tabNav {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: var(--glass-bg);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.tabButton {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem 0.5rem;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  transition: all 0.3s ease;
+}
+
+.tabButton.active {
+  background: var(--card-bg);
+  color: var(--accent-primary);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.tabIcon {
+  font-size: 1.25rem;
+}
+
+.tabLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Tab Content */
+.tabContent {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Score Cards */
+.scoreCards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.scoreCard {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 1rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--card-border);
+}
+
+.scoreLabel {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.scoreCircle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.scoreInner {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--card-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.scoreValue {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.scoreLevel {
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+/* Sections */
+.section {
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--section-title);
+  margin-bottom: 1rem;
+}
+
+.sectionTitle span {
+  font-size: 1.1rem;
+}
+
+/* Findings List */
+.findingsList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.findingItem {
+  display: flex;
+  gap: 0.75rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.findingNumber {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  background: var(--accent-primary);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Profile Grid */
+.profileGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.profileItem {
+  padding: 0.75rem;
+  background: var(--glass-bg);
+  border-radius: 10px;
+}
+
+.profileLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  margin-bottom: 0.5rem;
+}
+
+.profileList {
+  list-style: none;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.profileList li {
+  margin-bottom: 0.25rem;
+}
+
+.copingStyle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  padding: 0.75rem;
+  background: var(--glass-bg);
+  border-radius: 10px;
+}
+
+/* Message Card */
+.messageCard {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(124, 58, 237, 0.1));
+  border: 1px solid var(--accent-primary);
+}
+
+.message {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  line-height: 1.7;
+  font-style: italic;
+}
+
+/* Drawing Tab */
+.imageContainer {
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--glass-bg);
+}
+
+.analyzedImage {
+  width: 100%;
+  max-height: 250px;
+  object-fit: contain;
+}
+
+.overview {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* Indicator List */
+.indicatorList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.indicatorItem {
+  padding: 0.75rem;
+  background: var(--glass-bg);
+  border-radius: 10px;
+}
+
+.indicatorHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.indicatorIcon {
+  font-size: 1.1rem;
+}
+
+.indicatorTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.indicatorContent {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.observed,
+.interpretation {
+  margin-bottom: 0.25rem;
+  line-height: 1.5;
+}
+
+/* Figure Grid */
+.figureGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.figureItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: var(--glass-bg);
+  border-radius: 8px;
+}
+
+.figureLabel {
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+}
+
+.figureValue {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+/* Solutions Tab */
+.recommendList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.recommendItem {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.recommendIcon {
+  flex-shrink: 0;
+  color: var(--success-color);
+  font-weight: bold;
+}
+
+.professionalSection {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(239, 68, 68, 0.1));
+  border: 1px solid var(--warning-color);
+}
+
+.professionalText {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Technique List */
+.techniqueList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.techniqueItem {
+  padding: 1rem;
+  background: var(--glass-bg);
+  border-radius: 10px;
+}
+
+.techniqueName {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.techniqueDesc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.techniqueBenefit {
+  font-size: 0.8rem;
+  color: var(--success-color);
+}
+
+/* Download Button */
+.downloadButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 1rem;
+  margin-top: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.downloadButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(16, 185, 129, 0.5);
+}
+
+.downloadButton:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.downloadIcon {
+  font-size: 1.25rem;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid white;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 0.75rem 1.5rem;
+  }
+
+  .scoreCards {
+    gap: 0.75rem;
+  }
+
+  .scoreCard {
+    padding: 0.75rem;
+  }
+
+  .scoreCircle {
+    width: 85px;
+    height: 85px;
+  }
+
+  .scoreInner {
+    width: 68px;
+    height: 68px;
+  }
+
+  .scoreValue {
+    font-size: 1.1rem;
+  }
+
+  .section {
+    padding: 1rem;
+  }
+
+  .profileGrid {
+    grid-template-columns: 1fr;
+  }
+}

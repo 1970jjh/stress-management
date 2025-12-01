@@ -201,8 +201,8 @@
 
 /* Message Card */
 .messageCard {
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(124, 58, 237, 0.1));
-  border: 1px solid var(--accent-primary);
+  background: var(--card-bg);
+  border: 2px solid var(--accent-primary);
 }
 
 .message {
@@ -325,8 +325,8 @@
 }
 
 .professionalSection {
-  background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(239, 68, 68, 0.1));
-  border: 1px solid var(--warning-color);
+  background: var(--card-bg);
+  border: 2px solid var(--warning-color);
 }
 
 .professionalText {

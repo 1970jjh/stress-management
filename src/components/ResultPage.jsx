@@ -36,244 +36,176 @@ export default function ResultPage({ result, imageData }) {
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-      const margin = 15;
-      let yPosition = margin;
+      const margin = 10;
 
-      // 폰트 설정
-      pdf.setFont('helvetica');
+      // PDF용 임시 컨테이너 생성
+      const pdfContainer = document.createElement('div');
+      pdfContainer.style.cssText = `
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        width: 800px;
+        background: white;
+        padding: 40px;
+        font-family: 'Noto Sans KR', sans-serif;
+        color: #1a1a2e;
+      `;
 
-      // 제목
-      pdf.setFontSize(20);
-      pdf.setTextColor(79, 70, 229);
-      pdf.text('스트레스 관리 - 빗속의 사람', pageWidth / 2, yPosition, { align: 'center' });
-      yPosition += 10;
+      // PDF 컨텐츠 HTML 생성
+      pdfContainer.innerHTML = `
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="color: #4f46e5; font-size: 28px; margin-bottom: 8px;">스트레스 관리 - 빗속의 사람</h1>
+          <p style="color: #6b7280; font-size: 14px;">PITR 심리 분석 리포트</p>
+          <p style="color: #9ca3af; font-size: 12px;">분석일: ${new Date().toLocaleDateString('ko-KR')}</p>
+        </div>
 
-      pdf.setFontSize(12);
-      pdf.setTextColor(100, 100, 100);
-      pdf.text('PITR 심리 분석 리포트', pageWidth / 2, yPosition, { align: 'center' });
-      yPosition += 8;
+        ${imageData ? `
+          <div style="text-align: center; margin-bottom: 30px;">
+            <img src="${imageData}" style="max-width: 200px; max-height: 200px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
+          </div>
+        ` : ''}
 
-      pdf.setFontSize(10);
-      pdf.text(`분석일: ${new Date().toLocaleDateString('ko-KR')}`, pageWidth / 2, yPosition, { align: 'center' });
-      yPosition += 15;
+        <div style="border-top: 2px solid #e5e7eb; padding-top: 20px; margin-bottom: 25px;">
+          <h2 style="color: #4f46e5; font-size: 20px; margin-bottom: 15px;">📊 종합 평가</h2>
+          <div style="display: flex; gap: 40px; margin-bottom: 20px;">
+            <div style="flex: 1; background: #f8fafc; padding: 15px; border-radius: 10px; text-align: center;">
+              <p style="color: #6b7280; font-size: 12px; margin-bottom: 5px;">스트레스 수준</p>
+              <p style="font-size: 24px; font-weight: bold; color: ${getStressColor(result.overallAssessment?.stressLevel?.level)};">
+                ${result.overallAssessment?.stressLevel?.percentage || 0}%
+              </p>
+              <p style="font-size: 14px; color: ${getStressColor(result.overallAssessment?.stressLevel?.level)};">
+                ${result.overallAssessment?.stressLevel?.level || '분석 중'}
+              </p>
+            </div>
+            <div style="flex: 1; background: #f8fafc; padding: 15px; border-radius: 10px; text-align: center;">
+              <p style="color: #6b7280; font-size: 12px; margin-bottom: 5px;">대처 능력</p>
+              <p style="font-size: 24px; font-weight: bold; color: ${getCopingColor(result.overallAssessment?.copingCapacity?.level)};">
+                ${result.overallAssessment?.copingCapacity?.percentage || 0}%
+              </p>
+              <p style="font-size: 14px; color: ${getCopingColor(result.overallAssessment?.copingCapacity?.level)};">
+                ${result.overallAssessment?.copingCapacity?.level || '분석 중'}
+              </p>
+            </div>
+          </div>
+        </div>
 
-      // 이미지 추가
-      if (imageData) {
-        const imgWidth = 60;
-        const imgHeight = 60;
-        const imgX = (pageWidth - imgWidth) / 2;
-        pdf.addImage(imageData, 'JPEG', imgX, yPosition, imgWidth, imgHeight);
-        yPosition += imgHeight + 10;
-      }
+        <div style="margin-bottom: 25px;">
+          <h2 style="color: #4f46e5; font-size: 18px; margin-bottom: 12px;">💡 주요 발견</h2>
+          <ul style="list-style: none; padding: 0;">
+            ${(result.overallAssessment?.keyFindings || []).map((finding, i) => `
+              <li style="display: flex; gap: 10px; margin-bottom: 8px; font-size: 14px; line-height: 1.6;">
+                <span style="background: #4f46e5; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0;">${i + 1}</span>
+                <span>${finding}</span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
 
-      // 구분선
-      pdf.setDrawColor(200, 200, 200);
-      pdf.line(margin, yPosition, pageWidth - margin, yPosition);
-      yPosition += 10;
+        <div style="margin-bottom: 25px;">
+          <h2 style="color: #4f46e5; font-size: 18px; margin-bottom: 12px;">🎨 그림 분석</h2>
+          <p style="font-size: 14px; line-height: 1.7; color: #4a4a6a; margin-bottom: 15px;">
+            ${result.drawingAnalysis?.overview || ''}
+          </p>
 
-      // 종합 평가
-      pdf.setFontSize(14);
-      pdf.setTextColor(79, 70, 229);
-      pdf.text('종합 평가', margin, yPosition);
-      yPosition += 8;
+          <h3 style="color: #6366f1; font-size: 15px; margin-bottom: 10px;">스트레스 지표</h3>
+          <div style="background: #f8fafc; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+            ${result.drawingAnalysis?.stressIndicators ? `
+              <p style="font-size: 13px; margin-bottom: 8px;"><strong>비:</strong> ${result.drawingAnalysis.stressIndicators.rain?.interpretation || '-'}</p>
+              <p style="font-size: 13px; margin-bottom: 8px;"><strong>구름:</strong> ${result.drawingAnalysis.stressIndicators.clouds?.interpretation || '-'}</p>
+              <p style="font-size: 13px;"><strong>웅덩이:</strong> ${result.drawingAnalysis.stressIndicators.puddles?.interpretation || '-'}</p>
+            ` : ''}
+          </div>
 
-      pdf.setFontSize(11);
-      pdf.setTextColor(50, 50, 50);
+          <h3 style="color: #6366f1; font-size: 15px; margin-bottom: 10px;">대처 자원</h3>
+          <div style="background: #f8fafc; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+            ${result.drawingAnalysis?.resourceIndicators ? `
+              <p style="font-size: 13px; margin-bottom: 8px;"><strong>우산:</strong> ${result.drawingAnalysis.resourceIndicators.umbrella?.interpretation || '-'}</p>
+              <p style="font-size: 13px; margin-bottom: 8px;"><strong>옷:</strong> ${result.drawingAnalysis.resourceIndicators.clothing?.interpretation || '-'}</p>
+              <p style="font-size: 13px;"><strong>피난처:</strong> ${result.drawingAnalysis.resourceIndicators.shelter?.interpretation || '-'}</p>
+            ` : ''}
+          </div>
+        </div>
 
-      // 스트레스 수준
-      const stressLevel = result.overallAssessment?.stressLevel;
-      pdf.text(`스트레스 수준: ${stressLevel?.level || '분석 중'} (${stressLevel?.percentage || 0}%)`, margin, yPosition);
-      yPosition += 6;
+        <div style="margin-bottom: 25px;">
+          <h2 style="color: #4f46e5; font-size: 18px; margin-bottom: 12px;">🧠 심리 프로필</h2>
+          <div style="display: flex; gap: 20px; margin-bottom: 15px;">
+            <div style="flex: 1; background: #ecfdf5; padding: 15px; border-radius: 10px;">
+              <h4 style="color: #10b981; font-size: 14px; margin-bottom: 8px;">강점</h4>
+              <ul style="font-size: 13px; padding-left: 20px; margin: 0;">
+                ${(result.psychologicalProfile?.strengths || []).map(s => `<li style="margin-bottom: 4px;">${s}</li>`).join('')}
+              </ul>
+            </div>
+            <div style="flex: 1; background: #fef3c7; padding: 15px; border-radius: 10px;">
+              <h4 style="color: #f59e0b; font-size: 14px; margin-bottom: 8px;">도전 과제</h4>
+              <ul style="font-size: 13px; padding-left: 20px; margin: 0;">
+                ${(result.psychologicalProfile?.challenges || []).map(c => `<li style="margin-bottom: 4px;">${c}</li>`).join('')}
+              </ul>
+            </div>
+          </div>
+          <p style="font-size: 13px; color: #4a4a6a;"><strong>대처 스타일:</strong> ${result.psychologicalProfile?.copingStyle || ''}</p>
+        </div>
 
-      // 대처 능력
-      const copingCapacity = result.overallAssessment?.copingCapacity;
-      pdf.text(`대처 능력: ${copingCapacity?.level || '분석 중'} (${copingCapacity?.percentage || 0}%)`, margin, yPosition);
-      yPosition += 10;
+        <div style="margin-bottom: 25px;">
+          <h2 style="color: #4f46e5; font-size: 18px; margin-bottom: 12px;">✨ 맞춤 권장사항</h2>
 
-      // 주요 발견
-      pdf.setFontSize(12);
-      pdf.setTextColor(79, 70, 229);
-      pdf.text('주요 발견', margin, yPosition);
-      yPosition += 7;
+          <h3 style="color: #6366f1; font-size: 14px; margin-bottom: 8px;">⚡ 즉시 실천</h3>
+          <ul style="font-size: 13px; padding-left: 20px; margin-bottom: 15px;">
+            ${(result.recommendations?.immediate || []).map(r => `<li style="margin-bottom: 4px;">${r}</li>`).join('')}
+          </ul>
 
-      pdf.setFontSize(10);
-      pdf.setTextColor(50, 50, 50);
-      const findings = result.overallAssessment?.keyFindings || [];
-      findings.forEach((finding, index) => {
-        const lines = pdf.splitTextToSize(`${index + 1}. ${finding}`, pageWidth - margin * 2);
-        lines.forEach(line => {
-          if (yPosition > pageHeight - margin) {
-            pdf.addPage();
-            yPosition = margin;
-          }
-          pdf.text(line, margin, yPosition);
-          yPosition += 5;
-        });
+          <h3 style="color: #6366f1; font-size: 14px; margin-bottom: 8px;">📅 단기 목표</h3>
+          <ul style="font-size: 13px; padding-left: 20px; margin-bottom: 15px;">
+            ${(result.recommendations?.shortTerm || []).map(r => `<li style="margin-bottom: 4px;">${r}</li>`).join('')}
+          </ul>
+
+          <h3 style="color: #6366f1; font-size: 14px; margin-bottom: 8px;">🎯 장기 목표</h3>
+          <ul style="font-size: 13px; padding-left: 20px; margin-bottom: 15px;">
+            ${(result.recommendations?.longTerm || []).map(r => `<li style="margin-bottom: 4px;">${r}</li>`).join('')}
+          </ul>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #ede9fe, #e0e7ff); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+          <h2 style="color: #4f46e5; font-size: 16px; margin-bottom: 10px;">💌 당신에게 전하는 메시지</h2>
+          <p style="font-size: 14px; line-height: 1.8; color: #1a1a2e; font-style: italic;">
+            ${result.personalizedMessage || ''}
+          </p>
+        </div>
+
+        <div style="text-align: center; color: #9ca3af; font-size: 11px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+          PITR(Person in the Rain) 심리 분석 리포트 | 스트레스 관리 - 빗속의 사람
+        </div>
+      `;
+
+      document.body.appendChild(pdfContainer);
+
+      // html2canvas로 이미지 캡처
+      const canvas = await html2canvas(pdfContainer, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff'
       });
-      yPosition += 5;
 
-      // 새 페이지 - 그림 분석
-      pdf.addPage();
-      yPosition = margin;
+      document.body.removeChild(pdfContainer);
 
-      pdf.setFontSize(14);
-      pdf.setTextColor(79, 70, 229);
-      pdf.text('그림 분석 상세', margin, yPosition);
-      yPosition += 10;
+      // 캔버스를 PDF에 추가
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      const imgWidth = pageWidth - margin * 2;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-      pdf.setFontSize(10);
-      pdf.setTextColor(50, 50, 50);
+      let heightLeft = imgHeight;
+      let position = margin;
 
-      const drawingAnalysis = result.drawingAnalysis;
-      if (drawingAnalysis) {
-        // 전체 개요
-        const overviewLines = pdf.splitTextToSize(`개요: ${drawingAnalysis.overview}`, pageWidth - margin * 2);
-        overviewLines.forEach(line => {
-          pdf.text(line, margin, yPosition);
-          yPosition += 5;
-        });
-        yPosition += 5;
+      // 첫 페이지
+      pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
+      heightLeft -= (pageHeight - margin * 2);
 
-        // 스트레스 지표
-        pdf.setFontSize(11);
-        pdf.setTextColor(79, 70, 229);
-        pdf.text('스트레스 지표', margin, yPosition);
-        yPosition += 6;
-
-        pdf.setFontSize(9);
-        pdf.setTextColor(50, 50, 50);
-
-        const stressIndicators = drawingAnalysis.stressIndicators;
-        if (stressIndicators) {
-          ['rain', 'clouds', 'puddles'].forEach(key => {
-            const indicator = stressIndicators[key];
-            if (indicator) {
-              const text = `• ${key === 'rain' ? '비' : key === 'clouds' ? '구름' : '웅덩이'}: ${indicator.interpretation}`;
-              const lines = pdf.splitTextToSize(text, pageWidth - margin * 2 - 5);
-              lines.forEach(line => {
-                if (yPosition > pageHeight - margin) {
-                  pdf.addPage();
-                  yPosition = margin;
-                }
-                pdf.text(line, margin + 3, yPosition);
-                yPosition += 4.5;
-              });
-            }
-          });
-        }
-        yPosition += 5;
-
-        // 대처 자원
-        pdf.setFontSize(11);
-        pdf.setTextColor(79, 70, 229);
-        pdf.text('대처 자원', margin, yPosition);
-        yPosition += 6;
-
-        pdf.setFontSize(9);
-        pdf.setTextColor(50, 50, 50);
-
-        const resourceIndicators = drawingAnalysis.resourceIndicators;
-        if (resourceIndicators) {
-          ['umbrella', 'clothing', 'shelter'].forEach(key => {
-            const indicator = resourceIndicators[key];
-            if (indicator) {
-              const text = `• ${key === 'umbrella' ? '우산' : key === 'clothing' ? '옷' : '피난처'}: ${indicator.interpretation}`;
-              const lines = pdf.splitTextToSize(text, pageWidth - margin * 2 - 5);
-              lines.forEach(line => {
-                if (yPosition > pageHeight - margin) {
-                  pdf.addPage();
-                  yPosition = margin;
-                }
-                pdf.text(line, margin + 3, yPosition);
-                yPosition += 4.5;
-              });
-            }
-          });
-        }
-      }
-
-      // 새 페이지 - 권장사항
-      pdf.addPage();
-      yPosition = margin;
-
-      pdf.setFontSize(14);
-      pdf.setTextColor(79, 70, 229);
-      pdf.text('맞춤 스트레스 관리 권장사항', margin, yPosition);
-      yPosition += 10;
-
-      const recommendations = result.recommendations;
-      if (recommendations) {
-        const sections = [
-          { title: '즉시 실천', items: recommendations.immediate },
-          { title: '단기 목표', items: recommendations.shortTerm },
-          { title: '장기 목표', items: recommendations.longTerm }
-        ];
-
-        sections.forEach(section => {
-          if (yPosition > pageHeight - 30) {
-            pdf.addPage();
-            yPosition = margin;
-          }
-
-          pdf.setFontSize(11);
-          pdf.setTextColor(79, 70, 229);
-          pdf.text(section.title, margin, yPosition);
-          yPosition += 6;
-
-          pdf.setFontSize(9);
-          pdf.setTextColor(50, 50, 50);
-
-          (section.items || []).forEach((item, index) => {
-            const lines = pdf.splitTextToSize(`${index + 1}. ${item}`, pageWidth - margin * 2 - 5);
-            lines.forEach(line => {
-              if (yPosition > pageHeight - margin) {
-                pdf.addPage();
-                yPosition = margin;
-              }
-              pdf.text(line, margin + 3, yPosition);
-              yPosition += 4.5;
-            });
-          });
-          yPosition += 5;
-        });
-      }
-
-      // 개인화된 메시지
-      yPosition += 5;
-      if (yPosition > pageHeight - 40) {
+      // 추가 페이지가 필요한 경우
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight + margin;
         pdf.addPage();
-        yPosition = margin;
-      }
-
-      pdf.setFontSize(11);
-      pdf.setTextColor(79, 70, 229);
-      pdf.text('당신에게 전하는 메시지', margin, yPosition);
-      yPosition += 7;
-
-      pdf.setFontSize(10);
-      pdf.setTextColor(50, 50, 50);
-      const messageLines = pdf.splitTextToSize(result.personalizedMessage || '', pageWidth - margin * 2);
-      messageLines.forEach(line => {
-        if (yPosition > pageHeight - margin) {
-          pdf.addPage();
-          yPosition = margin;
-        }
-        pdf.text(line, margin, yPosition);
-        yPosition += 5;
-      });
-
-      // 푸터
-      const totalPages = pdf.internal.getNumberOfPages();
-      for (let i = 1; i <= totalPages; i++) {
-        pdf.setPage(i);
-        pdf.setFontSize(8);
-        pdf.setTextColor(150, 150, 150);
-        pdf.text(
-          `PITR 심리 분석 리포트 | 페이지 ${i}/${totalPages}`,
-          pageWidth / 2,
-          pageHeight - 10,
-          { align: 'center' }
-        );
+        pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
+        heightLeft -= (pageHeight - margin * 2);
       }
 
       // PDF 저장

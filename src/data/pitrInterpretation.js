@@ -238,4 +238,4 @@ export const copingCapacityGuide = {
   }
 };
 
-export default pitrInterpretation;
+export default pitrInterpretationGuide;
